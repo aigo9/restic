@@ -104,7 +104,7 @@ func (r *packerManager) insertPacker(p *Packer) {
 
 // savePacker stores p in the backend.
 func (r *Repository) savePacker(p *Packer) error {
-	debug.Log("save packer with %d blobs\n", p.Packer.Count())
+	debug.Log("save packer with %d blobs (%d bytes)\n", p.Packer.Count(), p.Packer.Size())
 	_, err := p.Packer.Finalize()
 	if err != nil {
 		return err
@@ -114,6 +114,13 @@ func (r *Repository) savePacker(p *Packer) error {
 	if err != nil {
 		return errors.Wrap(err, "Seek")
 	}
+
+	fi, err := p.tmpfile.Stat()
+	if err != nil {
+		return errors.Wrap(err, "Seek")
+	}
+
+	debug.Log("  tempfile stat size: %v", fi.Size())
 
 	id := restic.IDFromHash(p.hw.Sum(nil))
 	h := restic.Handle{Type: restic.DataFile, Name: id.String()}
