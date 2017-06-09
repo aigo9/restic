@@ -170,8 +170,10 @@ func getRemainingSize(rd io.Reader) (size int64, err error) {
 
 	if r, ok := rd.(Lenner); ok {
 		size = int64(r.Len())
+		debug.Log("lenner, size: %d", size)
 	} else if r, ok := rd.(Sizer); ok {
 		size = r.Size()
+		debug.Log("sizer, size: %d", size)
 	} else if f, ok := rd.(*os.File); ok {
 		fi, err := f.Stat()
 		if err != nil {
@@ -184,6 +186,7 @@ func getRemainingSize(rd io.Reader) (size int64, err error) {
 		}
 
 		size = fi.Size() - pos
+		debug.Log("file, pos %v, len %v, size: %d", pos, fi.Size(), size)
 	} else {
 		panic(fmt.Sprintf("Save() got passed a reader without a method to determine the data size, type is %T", rd))
 	}
