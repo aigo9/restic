@@ -160,6 +160,7 @@ func (arch *Archiver) saveChunk(chunk chunker.Chunk, p *restic.Progress, token s
 	err := arch.Save(restic.DataBlob, chunk.Data, id)
 	// TODO handle error
 	if err != nil {
+		debug.Log("Save(%v) failed: %v", id.Str(), err)
 		panic(err)
 	}
 
